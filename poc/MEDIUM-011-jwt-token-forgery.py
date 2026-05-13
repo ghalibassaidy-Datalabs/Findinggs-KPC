@@ -40,7 +40,7 @@ except ImportError:
 # ──────────────────────────────────────────────
 # KONFIGURASI
 # ──────────────────────────────────────────────
-API_BASE = "http://localhost:8000/api/v1"
+API_BASE = "https://dev-api.genai.kpc.co.id/api/v1"  # Backend API DEV
 
 # Target email yang akan di-impersonate (gunakan email test di DEV)
 TARGET_EMAIL = "admin@kpc.co.id"  # Ganti dengan email yang ada di DEV
@@ -54,7 +54,7 @@ CANDIDATE_SECRETS = [
 ]
 
 ALGORITHM = "HS256"
-READ_ENDPOINT = f"{API_BASE}/auth/me"
+READ_ENDPOINT = f"{API_BASE}/users"  # 401 tanpa token, 200 dengan token valid
 
 
 def separator(title: str):
@@ -79,7 +79,10 @@ def test_forged_token(token: str, secret_used: str) -> bool:
     try:
         resp = requests.get(
             READ_ENDPOINT,
-            headers={"Authorization": f"Bearer {token}"},
+            headers={
+                "Authorization": f"Bearer {token}",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            },
             timeout=5,
         )
 

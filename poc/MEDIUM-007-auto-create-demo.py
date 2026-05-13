@@ -23,7 +23,7 @@ import sys
 # ──────────────────────────────────────────────
 # KONFIGURASI
 # ──────────────────────────────────────────────
-API_BASE = "http://localhost:8000/api/v1"
+API_BASE = "https://dev-api.genai.kpc.co.id/api/v1"  # Backend API DEV
 
 
 def separator(title: str):
@@ -137,17 +137,17 @@ def show_curl_commands():
         """
   # 1. Lihat daftar user terbaru (perlu admin token)
   curl -s -H "Authorization: Bearer ADMIN_TOKEN" \\
-    http://localhost:8000/api/v1/users/ | \\
+    https://dev-api.genai.kpc.co.id/api/v1/users | \\
     python3 -m json.tool | head -50
 
   # 2. Cek apakah ada user yang created_at hari ini
   curl -s -H "Authorization: Bearer ADMIN_TOKEN" \\
-    "http://localhost:8000/api/v1/users/?sort_by=created_at&order=desc" | \\
+    "https://dev-api.genai.kpc.co.id/api/v1/users?sort_by=created_at&order=desc" | \\
     python3 -m json.tool
 
   # 3. Cek activity log untuk verifikasi ketidakhadiran audit trail
   curl -s -H "Authorization: Bearer ADMIN_TOKEN" \\
-    "http://localhost:8000/api/v1/activity-logs/?action=login" | \\
+    "https://dev-api.genai.kpc.co.id/api/v1/activity-users/activity-logs?action=login" | \\
     python3 -m json.tool
 """
     )

@@ -36,17 +36,17 @@ except ImportError:
 # ──────────────────────────────────────────────
 # KONFIGURASI
 # ──────────────────────────────────────────────
-API_BASE = "http://localhost:8000/api/v1"
+API_BASE = "https://dev-api.genai.kpc.co.id/api/v1"  # Backend API DEV
 
 # Endpoint ringan yang butuh auth (butuh 3 DB connections via get_current_user)
 # Ganti dengan endpoint yang tersedia di DEV environment
 PROTECTED_ENDPOINTS = [
-    "/auth/me",             # 3 DB connections: user lookup, roles, custodian divisions
+    "/users",               # 3 DB connections: user lookup, roles, custodian divisions
 ]
 
 # Token valid dari DEV (diperlukan untuk hit endpoint protected)
 # Jalankan tanpa token untuk melihat error berbeda
-VALID_TOKEN = "REPLACE_WITH_DEV_JWT_TOKEN"  # atau None untuk test tanpa auth
+VALID_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0LmZhLnN1cGVydmlzb3JAZ21haWwuY29tIiwiZXhwIjoxNzc4NzI2OTY5fQ.gLZThTYRyfy3Ep3kaxMQYGGeDygcNSnGAn6IHWr4EvQ"  # atau None untuk test tanpa auth
 
 
 def separator(title: str):
@@ -60,7 +60,7 @@ def make_request(
 ):
     """Kirim satu request dan catat hasilnya."""
     url = f"{API_BASE}{endpoint}"
-    headers = {}
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
     if token and token != "REPLACE_WITH_DEV_JWT_TOKEN":
         headers["Authorization"] = f"Bearer {token}"
 
@@ -181,7 +181,7 @@ def analyze_results(all_results: dict):
     print(
         """
   PENJELASAN TEKNIS:
-  ┌─ Request ke endpoint protected (/auth/me, dll)
+  ┌─ Request ke endpoint protected (/users, dll)
   │    └─ get_current_user() dipanggil
   │         ├─ session_scope() #1 → DB Connection untuk load user
   │         ├─ session_scope() #2 → DB Connection untuk roles/permissions

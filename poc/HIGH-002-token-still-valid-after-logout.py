@@ -26,15 +26,21 @@ from datetime import datetime
 # ──────────────────────────────────────────────
 # KONFIGURASI — sesuaikan sebelum menjalankan
 # ──────────────────────────────────────────────
-BASE_URL = "https://ptkpc-dev.outsystems.app/KPC_WORKBENCH"  # URL DEV
-API_BASE = "http://localhost:8000/api/v1"  # Backend API langsung
+BASE_URL = "https://ptkpc-dev.outsystems.app/authenticate/Login"  # Frontend DEV
+API_BASE = "https://dev-api.genai.kpc.co.id/api/v1"  # Backend API DEV
 
 # Kredensial akun TEST (bukan production!)
-TEST_EMAIL = "test.user@kpc.co.id"
-TEST_PASSWORD = "test_password_here"
+TEST_EMAIL = "test.fa.supervisor@gmail.com"
+TEST_PASSWORD = "kpcprima"
 
 # Endpoint yang aman untuk READ-ONLY demo
-SAFE_READ_ENDPOINT = f"{API_BASE}/auth/me"  # atau endpoint list sederhana
+SAFE_READ_ENDPOINT = f"{API_BASE}/users"  # 401 tanpa token, 200 dengan token valid
+
+# Session dengan User-Agent browser (DEV API memfilter python-requests via WAF)
+SESSION = requests.Session()
+SESSION.headers.update({
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+})
 
 
 def separator(title: str):
@@ -76,7 +82,7 @@ def main():
     # ──────────────────────────────────────
     step(1, "Login — dapatkan JWT token")
     try:
-        resp = requests.post(
+        resp = SESSION.post(
             f"{API_BASE}/auth/token",
             data={"username": TEST_EMAIL, "password": TEST_PASSWORD},
             headers={"Content-Type": "application/x-www-form-urlencoded"},
@@ -99,22 +105,24 @@ def main():
 
     except requests.exceptions.ConnectionError:
         print(f"  GAGAL terhubung ke {API_BASE}")
-        print("  Pastikan backend berjalan di localhost:8000")
+        print("  GAGAL terhubung ke DEV API. Cek koneksi internet.")
         return
 
     # ──────────────────────────────────────
     # STEP 2: Verifikasi token bekerja
     # ──────────────────────────────────────
     step(2, "Verifikasi token valid SEBELUM logout")
-    resp = requests.get(
+    resp = SESSION.get(
         SAFE_READ_ENDPOINT,
         headers={"Authorization": f"Bearer {jwt_token}"},
         timeout=10,
     )
     if resp.status_code == 200:
         result("Akses API dengan token", "BERHASIL (HTTP 200)", "OK")
-        user_data = resp.json()
-        result("User email", user_data.get("email", "N/A"))
+        data = resp.json()
+        # /users mengembalikan list — ambil email user pertama
+        email = data[0].get("email") if isinstance(data, list) and data else data.get("email", "N/A")
+        result("Data berhasil diakses", f"{len(data) if isinstance(data, list) else 1} record", "OK")
     else:
         result("Akses API", f"HTTP {resp.status_code}", "FAIL")
 
@@ -122,7 +130,7 @@ def main():
     # STEP 3: Logout
     # ──────────────────────────────────────
     step(3, "Melakukan LOGOUT")
-    resp = requests.post(
+    resp = SESSION.post(
         f"{API_BASE}/auth/logout",
         headers={"Authorization": f"Bearer {jwt_token}"},
         timeout=10,
@@ -146,7 +154,7 @@ def main():
 
     time.sleep(1)  # Jeda singkat untuk dramatisasi
 
-    resp = requests.get(
+    resp = SESSION.get(
         SAFE_READ_ENDPOINT,
         headers={"Authorization": f"Bearer {jwt_token}"},
         timeout=10,
@@ -157,9 +165,9 @@ def main():
         print("  \033[91m╔══════════════════════════════════════════════════╗\033[0m")
         print("  \033[91m║  VULNERABILITY CONFIRMED: TOKEN MASIH VALID!    ║\033[0m")
         print("  \033[91m╚══════════════════════════════════════════════════╝\033[0m")
-        user_data = resp.json()
+        data = resp.json()
         result("HTTP Status", "200 OK", "FAIL")
-        result("Email yang diakses", user_data.get("email", "N/A"), "FAIL")
+        result("Records diakses", f"{len(data) if isinstance(data, list) else 1} record", "FAIL")
         result("Token masih valid sampai", f"~{int(expires_in)//3600} jam ke depan", "FAIL")
     else:
         result("HTTP Status", f"{resp.status_code} (Token sudah invalid)", "OK")

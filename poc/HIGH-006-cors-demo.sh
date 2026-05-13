@@ -12,9 +12,9 @@
 # SAFETY: Hanya menguji CORS headers. Read-only. Tidak mengubah data.
 # ==============================================================
 
-API_BASE="${1:-http://localhost:8000}"
+API_BASE="${1:-https://dev-api.genai.kpc.co.id}"
 TOKEN="${2:-YOUR_JWT_TOKEN_HERE}"
-ENDPOINT="$API_BASE/api/v1/auth/me"
+ENDPOINT="$API_BASE/api/v1/users"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'

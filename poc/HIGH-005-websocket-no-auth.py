@@ -30,7 +30,7 @@ except ImportError:
 # ──────────────────────────────────────────────
 # KONFIGURASI — sesuaikan sebelum menjalankan
 # ──────────────────────────────────────────────
-WS_BASE = "ws://localhost:8000"  # WebSocket backend URL
+WS_BASE = "wss://dev-api.genai.kpc.co.id/ws/jobs/"  # WebSocket backend DEV (wss = secure)
 
 # Job ID bisa didapat dari:
 # 1. Network traffic saat user yang login menggunakan aplikasi (inspect browser)
@@ -38,8 +38,7 @@ WS_BASE = "ws://localhost:8000"  # WebSocket backend URL
 EXAMPLE_JOB_IDS = [
     # Isi dengan job_id aktual dari DEV environment
     # Format biasanya UUID: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-    "PLACEHOLDER_JOB_ID_1",
-    "PLACEHOLDER_JOB_ID_2",
+    "e1632a4e-e68f-4fe2-923a-532a77a6d715",
 ]
 
 
@@ -51,7 +50,7 @@ def separator(title: str):
 
 async def try_connect_without_auth(job_id: str) -> dict:
     """Coba connect ke WebSocket TANPA token auth."""
-    url = f"{WS_BASE}/ws/jobs/{job_id}"
+    url = f"{WS_BASE}{job_id}"
     print(f"\n  Mencoba: {url}")
     print("  Headers: (tidak ada Authorization token)")
 

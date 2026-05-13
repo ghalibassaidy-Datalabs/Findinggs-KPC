@@ -33,7 +33,7 @@ except ImportError:
 # ──────────────────────────────────────────────
 # KONFIGURASI
 # ──────────────────────────────────────────────
-API_BASE = "http://localhost:8000/api/v1"
+API_BASE = "https://dev-api.genai.kpc.co.id/api/v1"  # Backend API DEV
 
 # Email yang pasti ada tapi password salah (untuk demo brute force detection)
 EXISTING_USER_EMAIL = "test.user@kpc.co.id"
@@ -82,7 +82,10 @@ def demo_brute_force_no_lockout(n_attempts: int = 12):
             resp = requests.post(
                 f"{API_BASE}/auth/token",
                 data={"username": EXISTING_USER_EMAIL, "password": pwd},
-                headers={"Content-Type": "application/x-www-form-urlencoded"},
+                headers={
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                },
                 timeout=5,
             )
             elapsed = time.time() - start
@@ -194,7 +197,8 @@ def demo_state_flooding(n_requests: int = 50):
         try:
             resp = requests.get(
                 f"{API_BASE}/auth/get-azure-sso-url",
-                params={"redirect_uri": "http://localhost:3000"},
+                params={"redirect_uri": "https://ptkpc-dev.outsystems.app/authenticate/Login"},
+                headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"},
                 timeout=5,
             )
             return resp.status_code == 200
