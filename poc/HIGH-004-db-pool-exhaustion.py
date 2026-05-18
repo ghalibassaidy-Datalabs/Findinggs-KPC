@@ -46,7 +46,7 @@ PROTECTED_ENDPOINTS = [
 
 # Token valid dari DEV (diperlukan untuk hit endpoint protected)
 # Jalankan tanpa token untuk melihat error berbeda
-VALID_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0LmZhLnN1cGVydmlzb3JAZ21haWwuY29tIiwiZXhwIjoxNzc4NzI2OTY5fQ.gLZThTYRyfy3Ep3kaxMQYGGeDygcNSnGAn6IHWr4EvQ"  # atau None untuk test tanpa auth
+VALID_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0LmZhLnN1cGVydmlzb3JAZ21haWwuY29tIiwiZXhwIjoxNzc5MTczMDU0fQ.9OT6QjlR6h3ut6NBJskm3Bs4zikrNiipNKWmQOOPXGk"  # atau None untuk test tanpa auth
 
 
 def separator(title: str):
